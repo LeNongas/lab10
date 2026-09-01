@@ -1,5 +1,6 @@
 import type { Course } from '../types/course';
 import type { LoadState } from '../api/useCourses';
+import { useAuth } from '../hooks/useAuth';
 
 interface CourseListProps {
     courses: Course[];
@@ -7,9 +8,10 @@ interface CourseListProps {
     errorMessage: string;
     onRetry: () => void;
 
-    // Thêm 2 hàm để xử lý Sửa / Xóa
-    onEdit: (course: Course) => void;
-    onDelete: (course: Course) => void;
+    onEdit?: (course: Course) => void;
+    onDelete?: (course: Course) => void;
+    onRegister?: (course: Course) => void;
+    registeringCourseId?: number | null;
 }
 
 export default function CourseList({
@@ -19,7 +21,13 @@ export default function CourseList({
                                        onRetry,
                                        onEdit,
                                        onDelete,
+                                       onRegister,
+                                       registeringCourseId,
                                    }: CourseListProps) {
+    const { user } = useAuth();
+    const showAdminActions = user?.role === 'ADMIN' && onEdit && onDelete;
+    const showStudentActions = user?.role === 'STUDENT' && onRegister;
+    const showActions = Boolean(showAdminActions || showStudentActions);
 
     // Đang tải
     if (state === 'loading') {
@@ -74,10 +82,7 @@ export default function CourseList({
                     Số chỗ còn lại
                 </th>
 
-                {/* Cột mới */}
-                <th style={{ padding: '10px' }}>
-                    Thao tác
-                </th>
+                {showActions && <th style={{ padding: '10px' }}>Thao tác</th>}
             </tr>
             </thead>
 
@@ -114,29 +119,25 @@ export default function CourseList({
                         {course.soChoToiDa}
                     </td>
 
-                    {/* Nút Sửa / Xóa */}
-                    <td style={{ padding: '10px' }}>
-                        <button
-                            type="button"
-                            onClick={() => onEdit(course)}
-                            style={{
-                                marginRight: '8px',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            Sửa
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => onDelete(course)}
-                            style={{
-                                cursor: 'pointer',
-                            }}
-                        >
-                            Xóa
-                        </button>
-                    </td>
+                    {showActions && (
+                        <td style={{ padding: '10px' }}>
+                            {showAdminActions && (
+                                <>
+                                    <button type="button" onClick={() => onEdit(course)}>Sửa</button>{' '}
+                                    <button type="button" className="danger" onClick={() => onDelete(course)}>Xóa</button>
+                                </>
+                            )}
+                            {showStudentActions && (
+                                <button
+                                    type="button"
+                                    onClick={() => onRegister(course)}
+                                    disabled={course.soChoConLai === 0 || registeringCourseId === course.id}
+                                >
+                                    {registeringCourseId === course.id ? 'Đang đăng ký...' : 'Đăng ký'}
+                                </button>
+                            )}
+                        </td>
+                    )}
                 </tr>
             ))}
             </tbody>

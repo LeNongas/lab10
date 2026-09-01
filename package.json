@@ -1,0 +1,9 @@
+{
+  "name": "crs-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix crs-microservices/crs-frontend run dev",
+    "build": "npm --prefix crs-microservices/crs-frontend run build",
+    "lint": "npm --prefix crs-microservices/crs-frontend run lint"
+  }
+}

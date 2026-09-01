@@ -23,4 +23,21 @@ axiosClient.interceptors.request.use(
     }
 );
 
+// Phiên đăng nhập hết hạn: xóa dữ liệu cũ và đưa người dùng về trang đăng nhập.
+axiosClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('crs_token');
+            localStorage.removeItem('crs_user');
+
+            if (window.location.pathname !== '/login') {
+                window.location.assign('/login');
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 export default axiosClient;
