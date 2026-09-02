@@ -22,13 +22,34 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername()).orElse(null);
 
-        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Tài khoản hoặc mật khẩu không chính xác");
+        User user = userRepository
+                .findByUsername(request.getUsername())
+                .orElse(null);
+
+        if (
+                user == null ||
+                        !passwordEncoder.matches(
+                                request.getPassword(),
+                                user.getPassword()
+                        )
+        ) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Tài khoản hoặc mật khẩu không chính xác");
         }
 
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return ResponseEntity.ok(new AuthResponse(token));
+        String token = jwtUtil.generateToken(
+                user.getUsername(),
+                user.getRole()
+        );
+
+        AuthResponse response = new AuthResponse(
+                token,
+                user.getUsername(),
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

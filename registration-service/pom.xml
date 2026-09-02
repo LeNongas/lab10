@@ -110,6 +110,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
 
                 <configuration>
+                    <mainClass>com.example.registration_service.RegistrationServiceApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

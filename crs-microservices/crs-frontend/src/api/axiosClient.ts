@@ -7,6 +7,7 @@ const axiosClient = axios.create({
     },
 });
 
+// Request Interceptor
 // Tự động lấy JWT token và gắn vào mỗi request
 axiosClient.interceptors.request.use(
     (config) => {
@@ -23,16 +24,21 @@ axiosClient.interceptors.request.use(
     }
 );
 
-// Phiên đăng nhập hết hạn: xóa dữ liệu cũ và đưa người dùng về trang đăng nhập.
+// Response Interceptor
+// Token hết hạn hoặc không hợp lệ -> đăng xuất
 axiosClient.interceptors.response.use(
     (response) => response,
+
     (error) => {
-        if (error.response?.status === 401) {
+        if (
+            axios.isAxiosError(error) &&
+            error.response?.status === 401
+        ) {
             localStorage.removeItem('crs_token');
             localStorage.removeItem('crs_user');
 
             if (window.location.pathname !== '/login') {
-                window.location.assign('/login');
+                window.location.href = '/login';
             }
         }
 
