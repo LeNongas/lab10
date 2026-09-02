@@ -39,12 +39,16 @@ public class AuthController {
                     .body("Tài khoản hoặc mật khẩu không chính xác");
         }
 
+        // Buổi 9: truyền thêm userId vào JWT
         String token = jwtUtil.generateToken(
+                user.getId(),
                 user.getUsername(),
                 user.getRole()
         );
 
+        // Buổi 9: response trả thêm userId cho Frontend
         AuthResponse response = new AuthResponse(
+                user.getId(),
                 token,
                 user.getUsername(),
                 user.getRole()

@@ -24,13 +24,29 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username, String role) {
+    public String generateToken(
+            Long userId,
+            String username,
+            String role
+    ) {
+        Date now = new Date();
+        Date expiry = new Date(
+                System.currentTimeMillis() + expiration
+        );
+
         return Jwts.builder()
                 .setSubject(username)
+
+                // Buổi 9: thêm userId vào JWT
+                .claim("userId", userId)
+
                 .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(
+                        getSigningKey(),
+                        SignatureAlgorithm.HS256
+                )
                 .compact();
     }
 }
