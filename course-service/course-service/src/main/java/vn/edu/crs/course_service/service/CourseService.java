@@ -21,7 +21,10 @@ public class CourseService {
     // ==========================================
     // 1. TÌM KIẾM + PHÂN TRANG
     // ==========================================
-    public Page<CourseDTO> search(String keyword, Pageable pageable) {
+    public Page<CourseDTO> search(
+            String keyword,
+            Pageable pageable
+    ) {
 
         Page<Course> page =
                 (keyword == null || keyword.isBlank())
@@ -35,9 +38,27 @@ public class CourseService {
         return page.map(this::toDTO);
     }
 
+    // ==========================================
+    // 2. LẤY 1 MÔN HỌC THEO ID
+    // Buổi 9
+    // ==========================================
+    public CourseDTO getById(Long id) {
+
+        Course course =
+                courseRepository
+                        .findById(id)
+                        .orElseThrow(
+                                () ->
+                                        new NoSuchElementException(
+                                                "Khong tim thay mon hoc id = " + id
+                                        )
+                        );
+
+        return toDTO(course);
+    }
 
     // ==========================================
-    // 2. THÊM MÔN HỌC
+    // 3. THÊM MÔN HỌC
     // ==========================================
     @Transactional
     public CourseDTO create(CourseDTO courseDTO) {
@@ -68,9 +89,8 @@ public class CourseService {
         return toDTO(savedCourse);
     }
 
-
     // ==========================================
-    // 3. CẬP NHẬT MÔN HỌC
+    // 4. CẬP NHẬT MÔN HỌC
     // ==========================================
     @Transactional
     public CourseDTO update(
@@ -96,15 +116,6 @@ public class CourseService {
                 courseDTO.getSoTinChi()
         );
 
-        /*
-         * Tính số sinh viên đã đăng ký.
-         *
-         * Ví dụ:
-         * tối đa = 40
-         * còn lại = 35
-         *
-         * => đã đăng ký = 5
-         */
         int soLuongDaDangKy =
                 course.getSoChoToiDa()
                         - course.getSoChoConLai();
@@ -112,8 +123,6 @@ public class CourseService {
         int soChoToiDaMoi =
                 courseDTO.getSoChoToiDa();
 
-        // Không được giảm số chỗ nhỏ hơn
-        // số sinh viên đã đăng ký
         if (soChoToiDaMoi < soLuongDaDangKy) {
 
             throw new IllegalArgumentException(
@@ -136,9 +145,8 @@ public class CourseService {
         return toDTO(updatedCourse);
     }
 
-
     // ==========================================
-    // 4. XÓA MÔN HỌC
+    // 5. XÓA MÔN HỌC
     // ==========================================
     @Transactional
     public void delete(Long id) {
@@ -156,9 +164,8 @@ public class CourseService {
         courseRepository.delete(course);
     }
 
-
     // ==========================================
-    // 5. GIỮ CHỖ
+    // 6. GIỮ CHỖ
     // Internal API
     // ==========================================
     @Transactional
@@ -190,9 +197,8 @@ public class CourseService {
         );
     }
 
-
     // ==========================================
-    // 6. TRẢ CHỖ
+    // 7. TRẢ CHỖ
     // Internal API
     // ==========================================
     @Transactional
@@ -223,9 +229,8 @@ public class CourseService {
         );
     }
 
-
     // ==========================================
-    // 7. ENTITY -> DTO
+    // 8. ENTITY -> DTO
     // ==========================================
     private CourseDTO toDTO(Course course) {
 

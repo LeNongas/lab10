@@ -1,4 +1,5 @@
 import axiosClient from './axiosClient';
+import type { Course } from '../types/course';
 
 export interface CourseFormValues {
     tenMonHoc: string;
@@ -21,6 +22,14 @@ export const getCourses = (
     });
 };
 
+// Buổi 9:
+// Lấy thông tin một môn học theo id
+export const getCourseById = (id: number) => {
+    return axiosClient.get<Course>(
+        `/api/courses/${id}`
+    );
+};
+
 // Chuẩn hóa dữ liệu trước khi gửi lên backend
 const toPayload = (values: CourseFormValues) => ({
     tenMonHoc: values.tenMonHoc.trim(),
@@ -29,8 +38,13 @@ const toPayload = (values: CourseFormValues) => ({
 });
 
 // Thêm môn học
-export const createCourse = (values: CourseFormValues) => {
-    return axiosClient.post('/api/courses', toPayload(values));
+export const createCourse = (
+    values: CourseFormValues
+) => {
+    return axiosClient.post(
+        '/api/courses',
+        toPayload(values)
+    );
 };
 
 // Sửa môn học
@@ -46,5 +60,7 @@ export const updateCourse = (
 
 // Xóa môn học
 export const deleteCourse = (id: number) => {
-    return axiosClient.delete(`/api/courses/${id}`);
+    return axiosClient.delete(
+        `/api/courses/${id}`
+    );
 };

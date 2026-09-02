@@ -1,11 +1,18 @@
 import { createContext } from 'react';
-import type { LoginResponse } from '../types/auth';
+import type { LoginResponse, UserRole } from '../types/auth';
+
+export interface AuthUser {
+    id: number;
+    username: string;
+    role: UserRole;
+}
 
 export interface AuthContextValue {
-    user: Omit<LoginResponse, 'token'> | null;
+    user: AuthUser | null;
     login: (auth: LoginResponse) => void;
     logout: () => void;
     isAuthenticated: boolean;
 }
 
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext =
+    createContext<AuthContextValue | undefined>(undefined);

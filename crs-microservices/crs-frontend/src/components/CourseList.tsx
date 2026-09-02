@@ -9,6 +9,10 @@ interface CourseListProps {
 
     onEdit?: (course: Course) => void;
     onDelete?: (course: Course) => void;
+
+    // Buổi 9
+    onRegister?: (course: Course) => void;
+    registeringId?: number | null;
 }
 
 export default function CourseList({
@@ -18,33 +22,39 @@ export default function CourseList({
                                        onRetry,
                                        onEdit,
                                        onDelete,
+                                       onRegister,
+                                       registeringId,
                                    }: CourseListProps) {
 
-    // Đang tải
     if (state === 'loading') {
         return <p>Đang tải danh sách môn học...</p>;
     }
 
-    // Có lỗi
     if (state === 'error') {
         return (
             <div style={{ color: '#b91c1c' }}>
                 <p>{errorMessage}</p>
 
-                <button type="button" onClick={onRetry}>
+                <button
+                    type="button"
+                    onClick={onRetry}
+                >
                     Thử lại
                 </button>
             </div>
         );
     }
 
-    // Danh sách rỗng
     if (state === 'empty') {
         return <p>Không tìm thấy môn học nào phù hợp.</p>;
     }
 
-    // Chỉ hiện cột Thao tác khi trang cha truyền onEdit hoặc onDelete
-    const showActions = Boolean(onEdit || onDelete);
+    // Hiện cột thao tác nếu có ít nhất một hành động
+    const showActions = Boolean(
+        onEdit ||
+        onDelete ||
+        onRegister
+    );
 
     return (
         <table
@@ -112,6 +122,7 @@ export default function CourseList({
 
                     {showActions && (
                         <td style={{ padding: '10px' }}>
+
                             {onEdit && (
                                 <button
                                     type="button"
@@ -125,12 +136,40 @@ export default function CourseList({
                                 <button
                                     type="button"
                                     className="danger"
-                                    style={{ marginLeft: '8px' }}
+                                    style={{
+                                        marginLeft: onEdit
+                                            ? '8px'
+                                            : '0',
+                                    }}
                                     onClick={() => onDelete(course)}
                                 >
                                     Xóa
                                 </button>
                             )}
+
+                            {onRegister && (
+                                <button
+                                    type="button"
+                                    style={{
+                                        marginLeft:
+                                            onEdit || onDelete
+                                                ? '8px'
+                                                : '0',
+                                    }}
+                                    onClick={() => onRegister(course)}
+                                    disabled={
+                                        course.soChoConLai === 0 ||
+                                        registeringId === course.id
+                                    }
+                                >
+                                    {registeringId === course.id
+                                        ? 'Đang đăng ký...'
+                                        : course.soChoConLai === 0
+                                            ? 'Hết chỗ'
+                                            : 'Đăng ký'}
+                                </button>
+                            )}
+
                         </td>
                     )}
                 </tr>

@@ -38,6 +38,18 @@ public class CourseController {
     }
 
     // =========================
+    // BUỔI 9:
+    // LẤY 1 MÔN HỌC THEO ID
+    // GET /api/courses/{id}
+    // =========================
+    @GetMapping("/courses/{id}")
+    public CourseDTO getById(
+            @PathVariable Long id
+    ) {
+        return courseService.getById(id);
+    }
+
+    // =========================
     // THÊM MÔN HỌC
     // POST /api/courses
     // =========================
