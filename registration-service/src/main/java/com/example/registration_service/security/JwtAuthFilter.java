@@ -40,12 +40,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             try {
 
-                // Tạo SecretKey từ jwt.secret
                 SecretKey key = Keys.hmacShaKeyFor(
                         secret.getBytes(StandardCharsets.UTF_8)
                 );
 
-                // Đọc và xác thực JWT
                 Claims claims = Jwts.parser()
                         .verifyWith(key)
                         .build()
@@ -55,43 +53,60 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String username = claims.getSubject();
                 String role = claims.get("role", String.class);
 
+                Number userIdNumber =
+                        claims.get("userId", Number.class);
+
+                Long userId =
+                        userIdNumber != null
+                                ? userIdNumber.longValue()
+                                : null;
+
+                System.out.println("===== JWT OK =====");
+                System.out.println("username = " + username);
+                System.out.println("role = " + role);
+                System.out.println("userId = " + userId);
+
                 if (username != null) {
 
-                    UsernamePasswordAuthenticationToken authentication;
-
-                    if (role != null && !role.isBlank()) {
-
-                        authentication =
-                                new UsernamePasswordAuthenticationToken(
-                                        username,
-                                        null,
-                                        List.of(
-                                                new SimpleGrantedAuthority(
-                                                        "ROLE_" + role
-                                                )
-                                        )
-                                );
-
-                    } else {
-
-                        authentication =
-                                new UsernamePasswordAuthenticationToken(
-                                        username,
-                                        null,
-                                        List.of()
-                                );
-                    }
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    username,
+                                    userId,
+                                    role != null
+                                            ? List.of(
+                                            new SimpleGrantedAuthority(
+                                                    "ROLE_" + role
+                                            )
+                                    )
+                                            : List.of()
+                            );
 
                     SecurityContextHolder
                             .getContext()
                             .setAuthentication(authentication);
+
+                    System.out.println(
+                            "authenticated = "
+                                    + authentication.isAuthenticated()
+                    );
                 }
 
             } catch (Exception e) {
 
-                // Token lỗi / hết hạn / sai chữ ký
+                System.out.println("===== JWT ERROR =====");
+                System.out.println(
+                        "Type: " + e.getClass().getName()
+                );
+                System.out.println(
+                        "Message: " + e.getMessage()
+                );
+
+                e.printStackTrace();
+
                 SecurityContextHolder.clearContext();
             }
+        } else {
+            System.out.println("===== KHONG CO BEARER TOKEN =====");
         }
 
         filterChain.doFilter(request, response);
