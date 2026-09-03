@@ -8,13 +8,25 @@ const axiosClient = axios.create({
 });
 
 // Request Interceptor
-// Tự động lấy JWT token và gắn vào mỗi request
 axiosClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('crs_token');
 
-        if (token) {
+        const url = config.url ?? '';
+        const method = config.method?.toLowerCase();
+
+        // Các API public không cần JWT
+        const isLoginRequest = url === '/api/auth/login';
+
+        const isPublicCourseRequest =
+            method === 'get' &&
+            url.startsWith('/api/courses');
+
+        // Chỉ gắn JWT cho các API cần đăng nhập
+        if (token && !isLoginRequest && !isPublicCourseRequest) {
             config.headers.Authorization = `Bearer ${token}`;
+        } else {
+            delete config.headers.Authorization;
         }
 
         return config;
@@ -28,7 +40,6 @@ axiosClient.interceptors.request.use(
 // Token hết hạn hoặc không hợp lệ -> đăng xuất
 axiosClient.interceptors.response.use(
     (response) => response,
-
     (error) => {
         if (
             axios.isAxiosError(error) &&
