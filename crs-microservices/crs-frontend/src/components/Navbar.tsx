@@ -28,9 +28,15 @@ export default function Navbar() {
                     </NavLink>
 
                     {user?.role === 'ADMIN' && (
-                        <NavLink to="/admin/courses">
-                            Quản lý môn học
-                        </NavLink>
+                        <>
+                            <NavLink to="/admin/courses">
+                                Quản lý môn học
+                            </NavLink>
+
+                            <NavLink to="/admin/api-keys">
+                                Quản lý API Key
+                            </NavLink>
+                        </>
                     )}
 
                     {user?.role === 'STUDENT' && (
