@@ -36,3 +36,7 @@ Trong `homestay-monolith`, chạy `./mvnw.cmd test`. Bài kiểm tra tích hợp
 Giao diện gọi ứng dụng monolith tại cổng 8084.
 
 Dữ liệu trong ba CSDL cũ được giữ nguyên. CSDL `homestay_db` mới dùng dữ liệu mẫu riêng; các lượt đăng ký cũ không có ngày nhận/trả phòng nên không được chuyển thành đơn đặt phòng của hệ thống mới.
+
+
+---
+GitHub repository: `trduluong`
