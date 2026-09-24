@@ -1,9 +1,9 @@
 {
-  "name": "crs-workspace",
+  "name": "homestay-workspace",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix crs-microservices/crs-frontend run dev",
-    "build": "npm --prefix crs-microservices/crs-frontend run build",
-    "lint": "npm --prefix crs-microservices/crs-frontend run lint"
+    "dev": "npm --prefix homestay-frontend run dev",
+    "build": "npm --prefix homestay-frontend run build",
+    "lint": "npm --prefix homestay-frontend run lint"
   }
 }
